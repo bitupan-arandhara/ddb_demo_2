@@ -13,6 +13,7 @@ import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.bitupan.EnvVars.EnvVars;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,9 +39,26 @@ public class App
         // putItem(table, "t6", "20-12-2020", "PURCHASE", 15, customer);
     
         //2. Get Item
-        getItem(table, "t6", "20-12-2020");
+        //getItem(table, "t6", "20-12-2020");
 
-    
+        //3. Retrieve only a specific list of attributes using AttributesToGet
+        // GetItemSpec spec = new GetItemSpec()
+        //     .withPrimaryKey("transactionId", "t6", "date", "20-12-2020")
+        //     .withAttributesToGet("amount", "type");
+        // Item item = table.getItem(spec);
+        // System.out.println(item.toJSONPretty());
+
+        //4. Retreive only a specific list of attributs using ProjectionExpression
+        GetItemSpec spec = new GetItemSpec()
+            .withPrimaryKey("transactionId", "t6", "date", "20-12-2020");
+        System.out.println(table.getItem(spec).toJSONPretty());
+        System.out.println();
+        spec.withProjectionExpression("customer.customerName");
+        System.out.println(table.getItem(spec).toJSONPretty());
+        System.out.println();
+        spec.withProjectionExpression("transactionId, amount, customer.customerName");
+        System.out.println(table.getItem(spec).toJSONPretty());
+
     }
     public static void putItem(Table table, String hashKeyValueString, String rangeKeyValueString, String type, int amount, HashMap<String, String> customer){
         //build item
@@ -82,8 +100,8 @@ public class App
         // }
 
         //7. Convert the item to a JSON String
-        //String itemAsJsonString = item.toJSONPretty();
-        //System.out.println(itemAsJsonString);
+        String itemAsJsonString = item.toJSONPretty();
+        System.out.println(itemAsJsonString);
         // ObjectMapper mapper = new ObjectMapper();
         // try{
         //     JsonNode rootNode = mapper.readTree(itemAsJsonString);
