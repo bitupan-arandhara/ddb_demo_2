@@ -30,6 +30,11 @@
       <artifactId>aws-java-sdk-dynamodb</artifactId>
       <version>1.12.296</version>
     </dependency>
+    <dependency>
+      <groupId>com.eclipsesource.minimal-json</groupId>
+      <artifactId>minimal-json</artifactId>
+      <version>0.9.4</version>
+    </dependency>
   </dependencies>
 
   <build>

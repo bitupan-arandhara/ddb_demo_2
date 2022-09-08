@@ -1,5 +1,6 @@
 package com.bitupan;
 
+import java.sql.Array;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,9 @@ import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.bitupan.EnvVars.EnvVars;
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonArray;
+import com.eclipsesource.json.JsonObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -39,7 +43,7 @@ public class App
         // putItem(table, "t6", "20-12-2020", "PURCHASE", 15, customer);
     
         //2. Get Item
-        //getItem(table, "t6", "20-12-2020");
+        getItem(table, "t6", "20-12-2020");
 
         //3. Retrieve only a specific list of attributes using AttributesToGet
         // GetItemSpec spec = new GetItemSpec()
@@ -49,15 +53,15 @@ public class App
         // System.out.println(item.toJSONPretty());
 
         //4. Retreive only a specific list of attributs using ProjectionExpression
-        GetItemSpec spec = new GetItemSpec()
-            .withPrimaryKey("transactionId", "t6", "date", "20-12-2020");
-        System.out.println(table.getItem(spec).toJSONPretty());
-        System.out.println();
-        spec.withProjectionExpression("customer.customerName");
-        System.out.println(table.getItem(spec).toJSONPretty());
-        System.out.println();
-        spec.withProjectionExpression("transactionId, amount, customer.customerName");
-        System.out.println(table.getItem(spec).toJSONPretty());
+        // GetItemSpec spec = new GetItemSpec()
+        //     .withPrimaryKey("transactionId", "t6", "date", "20-12-2020");
+        // System.out.println(table.getItem(spec).toJSONPretty());
+        // System.out.println();
+        // spec.withProjectionExpression("customer.customerName");
+        // System.out.println(table.getItem(spec).toJSONPretty());
+        // System.out.println();
+        // spec.withProjectionExpression("transactionId, amount, customer.customerName");
+        // System.out.println(table.getItem(spec).toJSONPretty());
 
     }
     public static void putItem(Table table, String hashKeyValueString, String rangeKeyValueString, String type, int amount, HashMap<String, String> customer){
@@ -102,6 +106,7 @@ public class App
         //7. Convert the item to a JSON String
         String itemAsJsonString = item.toJSONPretty();
         System.out.println(itemAsJsonString);
+        //a. Using Jackson
         // ObjectMapper mapper = new ObjectMapper();
         // try{
         //     JsonNode rootNode = mapper.readTree(itemAsJsonString);
@@ -118,5 +123,12 @@ public class App
         // catch(Exception e){
         //     System.out.println(e);
         // }
+        //b. Using minimal-json
+        JsonObject jsonObject = Json.parse(itemAsJsonString).asObject();
+        //int amount = jsonObject.getInt("amount", 0);
+        //int amount jsonObject.get("amount").asInt();System.out.println(amount);
+        JsonObject customerJsonObject = jsonObject.get("customer").asObject(); 
+        //System.out.println(jsonObject.get("customer"));
+        System.out.println(customerJsonObject.getString("customerName", "NULL"));
     }
 }
